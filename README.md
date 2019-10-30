@@ -25,3 +25,15 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+## Docker
+
+To build a release image:
+
+`docker build . -t site:1.0.0`
+
+To run that one:
+
+`docker run -it -p 3000:80 --rm site:1.0.0`
+
+Open the URL: `http://localhost:3000/`
