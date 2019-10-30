@@ -1,0 +1,22 @@
+<p>Selecione um servidor para alterar as informações do benefício.</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col" class="col-1">#</th>
+            <th scope="col" class="col-6">Nome</th>
+            <th scope="col" class="col-2">CPF</th>
+            <th scope="col" class="col-2">Matrícula</th>
+            <th scope="col" class="col-1">&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let servidor of listaServidores; index as i">
+            <th scope="row">{{ i + 1 }}</th>
+            <td>{{ servidor.nome }}</td>
+            <td>{{ servidor.cpf | documentNumber }}</td>
+            <td>{{ servidor.matricula }}</td>
+            <td><button type="button" class="btn btn-primary">Editar</button></td>
+        </tr>
+    </tbody>
+</table>

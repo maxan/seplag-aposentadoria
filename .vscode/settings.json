@@ -1,8 +1,9 @@
 {
-    "editor.autoIndent": true,
-    "editor.codeActionsOnSave": {
-        "source.organizeImports": false
+    "htmlhint.options": {
+        "attr-lowercase": ["*ngIf", "ngIf", "*ngFor", "ngFor", "ngSwitch", "ngModel"],
+        "doctype-first": false
     },
+    "editor.autoIndent": true,
     "editor.codeLens": false,
     "editor.cursorBlinking": "solid",
     "editor.cursorSmoothCaretAnimation": true,
@@ -18,8 +19,6 @@
     "editor.tabCompletion": "on",
     "editor.tabSize": 4,
     "editor.wordWrap": "off",
-    "files.autoSave": "afterDelay",
-    "files.autoSaveDelay": 1000,
     "files.exclude": {
         "**/.git": true,
         "**/.DS_Store": true,

@@ -4,18 +4,19 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ListagemComponent } from './listagem/listagem.component';
+import { ListaServidoresComponent } from './lista-servidores/lista-servidores.component';
 import { RouterModule } from '@angular/router';
-import { MatTableModule } from '@angular/material';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { DocumentNumberPipe } from './shared/pipes/document-number.pipe';
 
 @NgModule({
-    declarations: [AppComponent, ListagemComponent],
+    declarations: [AppComponent, ListaServidoresComponent, DocumentNumberPipe],
     imports: [
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
-        RouterModule.forRoot([{ path: '', component: ListagemComponent }]),
-        MatTableModule
+        RouterModule.forRoot([{ path: '', component: ListaServidoresComponent }]),
+        NgbModule
     ],
     providers: [],
     bootstrap: [AppComponent]
