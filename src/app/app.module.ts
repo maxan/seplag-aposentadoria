@@ -8,14 +8,29 @@ import { ListaServidoresComponent } from './lista-servidores/lista-servidores.co
 import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DocumentNumberPipe } from './shared/pipes/document-number.pipe';
+import { EdicaoBeneficioAposentadoriaComponent } from './edicao-beneficio-aposentadoria/edicao-beneficio-aposentadoria.component';
 
 @NgModule({
-    declarations: [AppComponent, ListaServidoresComponent, DocumentNumberPipe],
+    declarations: [
+        AppComponent,
+        ListaServidoresComponent,
+        DocumentNumberPipe,
+        EdicaoBeneficioAposentadoriaComponent
+    ],
     imports: [
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
-        RouterModule.forRoot([{ path: '', component: ListaServidoresComponent }]),
+        RouterModule.forRoot([
+            {
+                path: '',
+                component: ListaServidoresComponent
+            },
+            {
+                path: 'beneficio/aposentadoria/:matricula',
+                component: EdicaoBeneficioAposentadoriaComponent
+            }
+        ]),
         NgbModule
     ],
     providers: [],

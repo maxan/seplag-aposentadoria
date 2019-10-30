@@ -1,6 +1,13 @@
 {
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
     "htmlhint.options": {
-        "attr-lowercase": ["*ngIf", "ngIf", "*ngFor", "ngFor", "ngSwitch", "ngModel"],
+        "attr-lowercase": false,
         "doctype-first": false
     },
     "editor.autoIndent": true,
