@@ -6,6 +6,9 @@
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
     "htmlhint.options": {
         "attr-lowercase": false,
         "doctype-first": false
