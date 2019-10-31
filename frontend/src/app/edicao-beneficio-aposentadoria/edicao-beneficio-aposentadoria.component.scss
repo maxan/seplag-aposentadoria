@@ -2,3 +2,12 @@ label {
     font-weight: bold;
     margin-top: 15px;
 }
+.document-tree-invisible {
+    display: none;
+}
+.document-tree ul,
+.document-tree li {
+    margin-top: 0;
+    margin-bottom: 0;
+    list-style-type: none;
+}

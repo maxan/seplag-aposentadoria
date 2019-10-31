@@ -13,6 +13,9 @@ import { EdicaoBeneficioAposentadoriaComponent } from './edicao-beneficio-aposen
 import { ServidorService } from './shared/services/servidor.service';
 import { HttpClientModule } from '@angular/common/http';
 import { BeneficioService } from './shared/services/beneficio.service';
+import { MatTreeModule } from '@angular/material/tree';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
     declarations: [
@@ -37,7 +40,10 @@ import { BeneficioService } from './shared/services/beneficio.service';
                 component: EdicaoBeneficioAposentadoriaComponent
             }
         ]),
-        NgbModule
+        NgbModule,
+        MatIconModule,
+        MatButtonModule,
+        MatTreeModule
     ],
     providers: [ServidorService, BeneficioService],
     bootstrap: [AppComponent]
