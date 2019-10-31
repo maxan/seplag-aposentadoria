@@ -19,6 +19,7 @@ public class BeneficioRepositoryImpl implements BeneficioRepositoryCustom {
 
     @Override
     public List<Beneficio> listarBeneficiosPorMatriculaServidor(String matriculeServidor, TipoBeneficio tipoBeneficio) {
+        // Exemplo utilizando interface customizada para o repositório JPA.
         return this.entityManager
                 .createQuery(
                         "SELECT b FROM Beneficio b WHERE b.servidor.matricula = :matricula AND b.tipoBeneficio = :tipoBeneficio",
@@ -29,6 +30,7 @@ public class BeneficioRepositoryImpl implements BeneficioRepositoryCustom {
 
     @Override
     public List<Servidor> listarServidoresComBeneficio() {
+        // Exemplo utilizando interface customizada para o repositório JPA
         return this.entityManager.createQuery("SELECT b.servidor FROM Beneficio b", Servidor.class).getResultList();
     }
 }

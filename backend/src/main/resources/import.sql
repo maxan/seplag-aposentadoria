@@ -6,3 +6,5 @@ INSERT INTO beneficio (tipo_beneficio, servidor_id) VALUES ('APOSENTADORIA', 1);
 INSERT INTO beneficio (tipo_beneficio, servidor_id) VALUES ('APOSENTADORIA', 2);
 INSERT INTO beneficio (tipo_beneficio, servidor_id) VALUES ('APOSENTADORIA', 3);
 INSERT INTO beneficio (tipo_beneficio, servidor_id) VALUES ('APOSENTADORIA', 4);
+INSERT INTO tramitacao_movimento (beneficio_id, setor_origem, setor_destino, data_movimentacao) VALUES (1, 'SECRETARIA', 'ANALISE', TIMESTAMP WITH TIME ZONE '2005-12-31 07:30:02Z');
+INSERT INTO tramitacao_movimento (beneficio_id, setor_origem, setor_destino, data_movimentacao) VALUES (1, 'ANALISE', 'COMITE_GESTOR', TIMESTAMP WITH TIME ZONE '2006-01-31 10:59:10Z');
