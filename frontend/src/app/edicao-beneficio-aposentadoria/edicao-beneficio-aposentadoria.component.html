@@ -13,6 +13,7 @@
         <ng-template ngbTabTitle><b>Beneficiário</b></ng-template>
         <ng-template ngbTabContent>
             <div class="container">
+                <br />
                 <div class="form-group">
                     <label>Nome completo</label>
                     <p>{{ beneficio.servidor.nome }}</p>
@@ -37,6 +38,7 @@
     <ngb-tab title="Documentos">
         <ng-template ngbTabContent>
             <div class="container">
+                <br />
                 <div class="row">
                     <div class="col-md-4">
                         <mat-tree
@@ -81,6 +83,11 @@
                                 </li>
                             </mat-nested-tree-node>
                         </mat-tree>
+                        <div class="acoes-documentos">
+                            <button type="button" class="btn btn-primary">
+                                Adicionar documento
+                            </button>
+                        </div>
                     </div>
                     <div class="col-md-8">
                         <p>
@@ -100,18 +107,38 @@
     <ngb-tab title="Movimentações">
         <ng-template ngbTabContent>
             <div class="container">
+                <br />
                 <p>
-                    Sed commodo, leo at suscipit dictum, quam est porttitor sapien, eget sodales
-                    nibh elit id diam. Nulla facilisi. Donec egestas ligula vitae odio interdum
-                    aliquet. Duis lectus turpis, luctus eget tincidunt eu, congue et odio. Duis
-                    pharetra et nisl at faucibus. Quisque luctus pulvinar arcu, et molestie lectus
-                    ultrices et. Sed diam urna, egestas ut ipsum vel, volutpat volutpat neque.
-                    Praesent fringilla tortor arcu. Vivamus faucibus nisl enim, nec tristique ipsum
-                    euismod facilisis. Morbi ut bibendum est, eu tincidunt odio. Orci varius natoque
-                    penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris
-                    aliquet odio ac lorem aliquet ultricies in eget neque. Phasellus nec tortor vel
-                    tellus pulvinar feugiat.
+                    Abaixo está o histórico de tramitações do benefício de aposentadoria de
+                    <em>{{ beneficio.servidor.nome }}</em
+                    >.
                 </p>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="coluna-estreita-largura">#</th>
+                            <th scope="col" class="coluna-tramite-movimentacao">Data</th>
+                            <th scope="col" class="coluna-tramite-movimentacao">Origem</th>
+                            <th scope="col" class="coluna-tramite-movimentacao">
+                                Destino
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let movimentacao of tramitesMovimentos; index as i">
+                            <th scope="row">{{ i + 1 }}</th>
+                            <td class="coluna-tramite-movimentacao">
+                                {{ movimentacao.dataMovimentacao | date: 'dd/MM/yyyy HH:mm' }}
+                            </td>
+                            <td class="coluna-tramite-movimentacao">
+                                {{ movimentacao.setorOrigem }}
+                            </td>
+                            <td class="coluna-tramite-movimentacao">
+                                {{ movimentacao.setorDestino }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </ng-template>
     </ngb-tab>

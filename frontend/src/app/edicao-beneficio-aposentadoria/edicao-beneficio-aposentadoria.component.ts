@@ -4,22 +4,52 @@ import { map, switchMap } from 'rxjs/operators';
 import { BeneficioService } from '../shared/services/beneficio.service';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
+import { TreeItem } from '../shared/objects/tree-item';
+import { Beneficio } from '../shared/objects/beneficio';
+import { TramitacaoMovimento } from '../shared/objects/tramitacao-movimento';
 
 const TREE_DATA: TreeItem[] = [
     {
-        name: 'Fruit',
-        children: [{ name: 'Apple' }, { name: 'Banana' }, { name: 'Fruit loops' }]
+        name: 'Identificação',
+        children: [
+            { id: 101, name: 'Doc 235' },
+            { id: 102, name: 'Doc 5356' },
+            { id: 103, name: 'Doc 236643' }
+        ]
     },
     {
-        name: 'Vegetables',
+        name: 'Vida Funcional',
+        children: [
+            { id: 1011, name: 'Doc 1394' },
+            {
+                id: 1221,
+                name: 'Doc 9387439'
+            }
+        ]
+    },
+    {
+        name: 'Contagem de Tempo',
         children: [
             {
-                name: 'Green',
-                children: [{ name: 'Broccoli' }, { name: 'Brussel sprouts' }]
+                id: 7921,
+                name: 'Doc 439587'
             },
             {
-                name: 'Orange',
-                children: [{ name: 'Pumpkins' }, { name: 'Carrots' }]
+                id: 92921,
+                name: 'Doc 9485736'
+            }
+        ]
+    },
+    {
+        name: 'Remuneração/Proventos',
+        children: [
+            {
+                id: 7921,
+                name: 'Doc 439587'
+            },
+            {
+                id: 92921,
+                name: 'Doc 9485736'
             }
         ]
     }
@@ -32,6 +62,7 @@ const TREE_DATA: TreeItem[] = [
 })
 export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
     beneficio: Beneficio;
+    tramitesMovimentos: TramitacaoMovimento[];
     treeControl = new NestedTreeControl<TreeItem>(node => node.children);
     dataSource = new MatTreeNestedDataSource<TreeItem>();
 
@@ -51,14 +82,34 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
                         params.get('matricula')
                     );
                 }),
-                map(resposta => {
+                switchMap(resposta => {
                     if (resposta.sucesso) {
-                        return resposta.retorno as Beneficio;
+                        const beneficioEncontrado: Beneficio = resposta.retorno as Beneficio;
+                        return this.beneficioService
+                            .obterTramitacoesPorBeneficio(beneficioEncontrado.id)
+                            .pipe(
+                                map(respostaTramites => {
+                                    if (respostaTramites.sucesso) {
+                                        return [
+                                            beneficioEncontrado,
+                                            respostaTramites.retorno as TramitacaoMovimento[]
+                                        ] as [Beneficio, TramitacaoMovimento[]];
+                                    }
+                                    return ([beneficioEncontrado, [] as TramitacaoMovimento[]] as [
+                                        Beneficio,
+                                        TramitacaoMovimento
+                                    ]) as [Beneficio, TramitacaoMovimento[]];
+                                })
+                            );
                     }
+                    throw new Error(
+                        'Ocorreu algum problema no carregamento das informações do benefício.'
+                    );
                 })
             )
             .subscribe(value => {
-                this.beneficio = value;
+                this.beneficio = value[0];
+                this.tramitesMovimentos = value[1];
             });
     }
 

@@ -1,4 +1,4 @@
-interface Servidor {
+export interface Servidor {
     id?: number;
     nome?: string;
     cpf?: string;

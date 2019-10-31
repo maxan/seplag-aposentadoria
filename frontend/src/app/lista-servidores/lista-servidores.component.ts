@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ServidorService } from '../shared/services/servidor.service';
 import { BeneficioService } from '../shared/services/beneficio.service';
+import { Servidor } from '../shared/objects/servidor-publico';
 
 @Component({
     selector: 'app-lista-servidores',
