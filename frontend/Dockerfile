@@ -13,7 +13,7 @@ RUN npm install -g @angular/cli@8.3.15
 
 COPY . /app
 
-RUN ng build --output-path=dist
+RUN ng build --prod --output-path=dist
 
 #
 # prod imagem

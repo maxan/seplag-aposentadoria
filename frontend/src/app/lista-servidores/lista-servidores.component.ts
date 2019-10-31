@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { SERVIDORES } from '../shared/data/servidores';
 import { ServidorService } from '../shared/services/servidor.service';
 import { BeneficioService } from '../shared/services/beneficio.service';
 
