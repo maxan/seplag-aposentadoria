@@ -1,3 +1,8 @@
+<p *ngIf="mensagemAlertaPagina">
+    <ngb-alert [type]="mensagemAlertaPagina.tipo" (close)="apagarMensagemAlertaPagina()">{{
+        mensagemAlertaPagina.mensagem
+    }}</ngb-alert>
+</p>
 <p>
     Abaixo é possível gerir o benefício de aposentadoria do servdor, tramitando o processo e
     fornecendo os documentos necessários.
@@ -23,11 +28,11 @@
                     <p>{{ beneficio.servidor.cpf | documentNumber }}</p>
                 </div>
                 <div class="row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label>Órgão</label>
                         <p>{{ beneficio.servidor.orgao }}</p>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-3">
                         <label>Matrícula</label>
                         <p>{{ beneficio.servidor.matricula }}</p>
                     </div>
@@ -84,20 +89,18 @@
                             </mat-nested-tree-node>
                         </mat-tree>
                         <div class="acoes-documentos">
-                            <button type="button" class="btn btn-primary">
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                (click)="abrirJanelaEnvioArquivo(content)"
+                            >
                                 Adicionar documento
                             </button>
                         </div>
                     </div>
                     <div class="col-md-8">
                         <p>
-                            Raw denim you probably haven't heard of them jean shorts Austin.
-                            Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache
-                            cliche tempor, williamsburg carles vegan helvetica. Reprehenderit
-                            butcher retro keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui
-                            irure terry richardson ex squid. Aliquip placeat salvia cillum iphone.
-                            Seitan aliquip quis cardigan american apparel, butcher voluptate nisi
-                            qui.
+                            Implementar aqui visualização do arquivo.
                         </p>
                     </div>
                 </div>
@@ -143,3 +146,38 @@
         </ng-template>
     </ngb-tab>
 </ngb-tabset>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Adicionar arquivo</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss(false)">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label for="seletorArquivo">Arquivo</label>
+                <div class="input-group">
+                    <input
+                        class="form-control"
+                        id="seletorArquivo"
+                        type="file"
+                        ng2FileSelect
+                        [uploader]="uploader"
+                    />
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button
+            type="button"
+            class="btn btn-outline-dark"
+            (click)="enviarArquivoSelecionado(modal)"
+            [disabled]="!uploader.getNotUploadedItems().length"
+        >
+            Enviar arquivo agora
+        </button>
+    </div>
+</ng-template>

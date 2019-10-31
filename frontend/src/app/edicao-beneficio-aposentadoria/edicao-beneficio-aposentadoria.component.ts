@@ -7,6 +7,11 @@ import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { TreeItem } from '../shared/objects/tree-item';
 import { Beneficio } from '../shared/objects/beneficio';
 import { TramitacaoMovimento } from '../shared/objects/tramitacao-movimento';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { IRespostaPadrao } from '../shared/objects/resposta-padrao';
+import { FileUploader } from 'ng2-file-upload';
+import { environment } from 'src/environments/environment';
+import { MensagemAlertaPagina } from '../shared/objects/mensagem-alerta-pagina';
 
 const TREE_DATA: TreeItem[] = [
     {
@@ -65,11 +70,14 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
     tramitesMovimentos: TramitacaoMovimento[];
     treeControl = new NestedTreeControl<TreeItem>(node => node.children);
     dataSource = new MatTreeNestedDataSource<TreeItem>();
+    mensagemAlertaPagina: MensagemAlertaPagina;
+    uploader: FileUploader;
 
     constructor(
         private route: ActivatedRoute,
         private router: Router,
-        private beneficioService: BeneficioService
+        private beneficioService: BeneficioService,
+        private modalService: NgbModal
     ) {
         this.dataSource.data = TREE_DATA;
     }
@@ -110,13 +118,54 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
             .subscribe(value => {
                 this.beneficio = value[0];
                 this.tramitesMovimentos = value[1];
+                this.uploader = new FileUploader({
+                    url: `${environment.webApiHost}/v1/beneficios/${this.beneficio.id}/documento`
+                });
+                this.uploader.onAfterAddingFile = file => {
+                    file.withCredentials = false;
+                };
+                this.uploader.response.subscribe(respostaEnvio => {
+                    const resposta = JSON.parse(respostaEnvio) as IRespostaPadrao;
+                    if (resposta.sucesso) {
+                        this.mensagemAlertaPagina = {
+                            tipo: 'success',
+                            mensagem: 'Arquivo enviado com sucesso.'
+                        } as MensagemAlertaPagina;
+                    } else {
+                        this.mensagemAlertaPagina = {
+                            tipo: 'success',
+                            mensagem: 'Nenhum arquivo enviado.'
+                        } as MensagemAlertaPagina;
+                    }
+                });
             });
     }
 
     hasChild = (_: number, node: TreeItem) => !!node.children && node.children.length > 0;
 
     carregarDocumento(node) {
+        // TODO: Implementar visualização do arquivo após ser selecionado.
         console.log('SELECIONOU DOCUMENTO');
         console.log(node);
+    }
+
+    apagarMensagemAlertaPagina() {
+        this.mensagemAlertaPagina = null;
+    }
+
+    abrirJanelaEnvioArquivo(content) {
+        this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
+            result => {
+                // TODO: Implementar tratamento para encerramento de modal.
+            },
+            reason => {
+                // TODO: Implementar tratamento para encerramento de modal.
+            }
+        );
+    }
+
+    enviarArquivoSelecionado(modal) {
+        this.uploader.uploadAll();
+        modal.close(true);
     }
 }

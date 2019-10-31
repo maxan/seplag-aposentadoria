@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import br.gov.ceara.aposentadoria.dominio.dto.MensagemRetornoServicoDto;
 import br.gov.ceara.aposentadoria.enumerador.TipoBeneficio;
@@ -71,5 +72,13 @@ public class BeneficioController {
                 .onErrorResume(throwable -> Mono.just(new ResponseEntity(
                         new MensagemRetornoServicoDto.Builder(false, throwable.getLocalizedMessage()).build(),
                         HttpStatus.BAD_REQUEST)));
+    }
+
+    @PostMapping(path = "/{beneficioId}/documento")
+    public Mono<ResponseEntity> salvarDocumentoBeneficio(@PathVariable("beneficioId") Long beneficioId,
+            @RequestParam("file") MultipartFile arquivo) {
+        return Mono.just(new ResponseEntity(
+                new MensagemRetornoServicoDto.Builder(true, "Tramitações para benefício listadas com sucesso.").build(),
+                HttpStatus.OK));
     }
 }
