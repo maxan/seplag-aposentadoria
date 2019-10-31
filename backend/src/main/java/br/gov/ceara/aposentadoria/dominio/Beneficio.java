@@ -1,10 +1,11 @@
 package br.gov.ceara.aposentadoria.dominio;
 
 
-import br.gov.ceara.aposentadoria.enumerador.TipoBeneficio;
+import java.time.LocalDate;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+
+import br.gov.ceara.aposentadoria.enumerador.TipoBeneficio;
 
 @Entity
 public class Beneficio {
@@ -20,7 +21,7 @@ public class Beneficio {
     private LocalDate dataConcessao;
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Long id) {
@@ -28,7 +29,7 @@ public class Beneficio {
     }
 
     public TipoBeneficio getTipoBeneficio() {
-        return tipoBeneficio;
+        return this.tipoBeneficio;
     }
 
     public void setTipoBeneficio(TipoBeneficio tipoBeneficio) {
@@ -36,7 +37,7 @@ public class Beneficio {
     }
 
     public Servidor getServidor() {
-        return servidor;
+        return this.servidor;
     }
 
     public void setServidor(Servidor servidor) {
@@ -44,7 +45,7 @@ public class Beneficio {
     }
 
     public LocalDate getDataConcessao() {
-        return dataConcessao;
+        return this.dataConcessao;
     }
 
     public void setDataConcessao(LocalDate dataConcessao) {

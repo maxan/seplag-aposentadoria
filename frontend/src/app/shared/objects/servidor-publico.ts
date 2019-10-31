@@ -1,6 +1,7 @@
 interface Servidor {
-    nome: string;
-    cpf: string;
-    matricula: string;
-    orgao: string;
+    id?: number;
+    nome?: string;
+    cpf?: string;
+    matricula?: string;
+    orgao?: string;
 }

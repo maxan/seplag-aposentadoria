@@ -15,4 +15,12 @@ export class BeneficioService {
             `${environment.webApiHost}${this.resourcePath}/servidores`
         );
     }
+
+    public obterInformacoesBeneficioPorMatriculaServidor(
+        matriculaServidor: string
+    ): Observable<IRespostaPadrao> {
+        return this.client.get<IRespostaPadrao>(
+            `${environment.webApiHost}${this.resourcePath}/servidores/${matriculaServidor}`
+        );
+    }
 }

@@ -8,27 +8,27 @@
     </a>
 </div>
 <br />
-<ngb-tabset *ngIf="servidor">
+<ngb-tabset *ngIf="beneficio">
     <ngb-tab>
         <ng-template ngbTabTitle><b>Beneficiário</b></ng-template>
         <ng-template ngbTabContent>
             <form>
                 <div class="form-group">
                     <label>Nome completo</label>
-                    <p>{{ servidor.nome }}</p>
+                    <p>{{ beneficio.servidor.nome }}</p>
                 </div>
                 <div class="form-group">
                     <label>CPF</label>
-                    <p>{{ servidor.cpf | documentNumber }}</p>
+                    <p>{{ beneficio.servidor.cpf | documentNumber }}</p>
                 </div>
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label>Órgão</label>
-                        <p>{{ servidor.orgao }}</p>
+                        <p>{{ beneficio.servidor.orgao }}</p>
                     </div>
                     <div class="form-group col-md-6">
                         <label>Matrícula</label>
-                        <p>{{ servidor.matricula }}</p>
+                        <p>{{ beneficio.servidor.matricula }}</p>
                     </div>
                 </div>
             </form>

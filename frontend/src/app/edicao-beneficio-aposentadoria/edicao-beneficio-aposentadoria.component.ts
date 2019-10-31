@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { SERVIDORES } from '../shared/data/servidores';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
+import { BeneficioService } from '../shared/services/beneficio.service';
 
 @Component({
     selector: 'app-edicao-beneficio-aposentadoria',
@@ -9,24 +9,29 @@ import { map } from 'rxjs/operators';
     styleUrls: ['./edicao-beneficio-aposentadoria.component.scss']
 })
 export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
-    servidor: Servidor;
-    constructor(private route: ActivatedRoute, private router: Router) {}
+    beneficio: Beneficio;
+    constructor(
+        private route: ActivatedRoute,
+        private router: Router,
+        private beneficioService: BeneficioService
+    ) {}
 
     ngOnInit() {
         this.route.paramMap
             .pipe(
-                map((params: ParamMap) => {
-                    // TODO: Havendo um backend, substituir por chamada de service apropriado (esperando retornar apenas um objeto).
-                    return SERVIDORES.filter(
-                        item =>
-                            item.matricula.toLowerCase() === params.get('matricula').toLowerCase()
+                switchMap((params: ParamMap) => {
+                    return this.beneficioService.obterInformacoesBeneficioPorMatriculaServidor(
+                        params.get('matricula')
                     );
+                }),
+                map(resposta => {
+                    if (resposta.sucesso) {
+                        return resposta.retorno as Beneficio;
+                    }
                 })
             )
             .subscribe(value => {
-                if (value && value.length !== 0) {
-                    this.servidor = value[0];
-                }
+                this.beneficio = value;
             });
     }
 }
