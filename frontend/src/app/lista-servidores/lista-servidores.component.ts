@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SERVIDORES } from '../shared/data/servidores';
+import { ServidorService } from '../shared/services/servidor.service';
 
 @Component({
     selector: 'app-lista-servidores',
@@ -7,9 +8,15 @@ import { SERVIDORES } from '../shared/data/servidores';
     styleUrls: ['./lista-servidores.component.scss']
 })
 export class ListaServidoresComponent implements OnInit {
-    listaServidores = SERVIDORES;
+    listaServidores: Servidor[] = [];
 
-    constructor() {}
+    constructor(private servidorService: ServidorService) {}
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.servidorService.listarTodos().subscribe(resposta => {
+            if (resposta.sucesso) {
+                this.listaServidores = resposta.retorno as Servidor[];
+            }
+        });
+    }
 }

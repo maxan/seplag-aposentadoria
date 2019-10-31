@@ -10,6 +10,8 @@ import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DocumentNumberPipe } from './shared/pipes/document-number.pipe';
 import { EdicaoBeneficioAposentadoriaComponent } from './edicao-beneficio-aposentadoria/edicao-beneficio-aposentadoria.component';
+import { ServidorService } from './shared/services/servidor.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
     declarations: [
@@ -22,6 +24,7 @@ import { EdicaoBeneficioAposentadoriaComponent } from './edicao-beneficio-aposen
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
+        HttpClientModule,
         FormsModule,
         RouterModule.forRoot([
             {
@@ -35,7 +38,7 @@ import { EdicaoBeneficioAposentadoriaComponent } from './edicao-beneficio-aposen
         ]),
         NgbModule
     ],
-    providers: [],
+    providers: [ServidorService],
     bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    webApiHost: 'http://backend:8080'
+    webApiHost: 'http://localhost:8080/api'
 };
