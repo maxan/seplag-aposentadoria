@@ -1,8 +1,8 @@
 package br.gov.ceara.aposentadoria.dominio;
 
-import br.gov.ceara.aposentadoria.enumerador.Orgao;
-
 import javax.persistence.*;
+
+import br.gov.ceara.aposentadoria.enumerador.Orgao;
 
 @Entity
 public class Servidor {
@@ -11,13 +11,14 @@ public class Servidor {
     private Long id;
     private String nome;
     private String cpf;
+    @Column(unique = true)
     private String matricula;
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
     private Orgao orgao;
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Long id) {
@@ -25,7 +26,7 @@ public class Servidor {
     }
 
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     public void setNome(String nome) {
@@ -33,7 +34,7 @@ public class Servidor {
     }
 
     public String getCpf() {
-        return cpf;
+        return this.cpf;
     }
 
     public void setCpf(String cpf) {
@@ -41,7 +42,7 @@ public class Servidor {
     }
 
     public String getMatricula() {
-        return matricula;
+        return this.matricula;
     }
 
     public void setMatricula(String matricula) {
@@ -49,7 +50,7 @@ public class Servidor {
     }
 
     public Orgao getOrgao() {
-        return orgao;
+        return this.orgao;
     }
 
     public void setOrgao(Orgao orgao) {

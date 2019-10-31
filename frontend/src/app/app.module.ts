@@ -12,6 +12,7 @@ import { DocumentNumberPipe } from './shared/pipes/document-number.pipe';
 import { EdicaoBeneficioAposentadoriaComponent } from './edicao-beneficio-aposentadoria/edicao-beneficio-aposentadoria.component';
 import { ServidorService } from './shared/services/servidor.service';
 import { HttpClientModule } from '@angular/common/http';
+import { BeneficioService } from './shared/services/beneficio.service';
 
 @NgModule({
     declarations: [
@@ -38,7 +39,7 @@ import { HttpClientModule } from '@angular/common/http';
         ]),
         NgbModule
     ],
-    providers: [ServidorService],
+    providers: [ServidorService, BeneficioService],
     bootstrap: [AppComponent]
 })
 export class AppModule {}
