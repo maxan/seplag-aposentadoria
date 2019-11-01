@@ -20,6 +20,13 @@ public class Beneficio {
     private Servidor servidor;
     private LocalDate dataConcessao;
 
+    public Beneficio() {
+    }
+
+    public Beneficio(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return this.id;
     }

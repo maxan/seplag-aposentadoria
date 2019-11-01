@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import br.gov.ceara.aposentadoria.dominio.dto.MensagemRetornoServicoDto;
 import br.gov.ceara.aposentadoria.enumerador.TipoBeneficio;
 import br.gov.ceara.aposentadoria.service.BeneficioService;
+import br.gov.ceara.aposentadoria.service.DocumentoBeneficioService;
 import br.gov.ceara.aposentadoria.service.TramitacaoMovimentoService;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -22,12 +23,15 @@ public class BeneficioController {
     private static final Logger LOGGER = LoggerFactory.getLogger(BeneficioController.class);
     private final BeneficioService beneficioService;
     private final TramitacaoMovimentoService tramitacaoMovimentoService;
+    private final DocumentoBeneficioService documentoBeneficioService;
 
     @Autowired
     public BeneficioController(BeneficioService beneficioService,
-            TramitacaoMovimentoService tramitacaoMovimentoService) {
+            TramitacaoMovimentoService tramitacaoMovimentoService,
+            DocumentoBeneficioService documentoBeneficioService) {
         this.beneficioService = beneficioService;
         this.tramitacaoMovimentoService = tramitacaoMovimentoService;
+        this.documentoBeneficioService = documentoBeneficioService;
     }
 
     @GetMapping(path = "/servidores")
@@ -77,8 +81,14 @@ public class BeneficioController {
     @PostMapping(path = "/{beneficioId}/documento")
     public Mono<ResponseEntity> salvarDocumentoBeneficio(@PathVariable("beneficioId") Long beneficioId,
             @RequestParam("file") MultipartFile arquivo) {
-        return Mono.just(new ResponseEntity(
-                new MensagemRetornoServicoDto.Builder(true, "Tramitações para benefício listadas com sucesso.").build(),
-                HttpStatus.OK));
+        return this.documentoBeneficioService.salvarDocumentoBeneficio(arquivo, beneficioId)
+                .subscribeOn(Schedulers.elastic())
+                .map(documentoSalvo -> new ResponseEntity(
+                        new MensagemRetornoServicoDto.Builder(true, "Novo arquivo criado com sucesso.")
+                                .retorno(documentoSalvo).build(),
+                        HttpStatus.CREATED))
+                .onErrorResume(throwable -> Mono.just(new ResponseEntity(
+                        new MensagemRetornoServicoDto.Builder(false, throwable.getLocalizedMessage()).build(),
+                        HttpStatus.BAD_REQUEST)));
     }
 }
