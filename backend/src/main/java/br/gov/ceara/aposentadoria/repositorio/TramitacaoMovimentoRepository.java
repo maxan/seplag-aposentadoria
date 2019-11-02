@@ -9,6 +9,13 @@ import org.springframework.stereotype.Repository;
 
 import br.gov.ceara.aposentadoria.dominio.TramitacaoMovimento;
 
+/**
+ * Classe de repositório usada para acesso direto aos dados de tramitações de processos de benefício no banco de dados.
+ * Não possui regras de negócio.
+ * 
+ * @since 1.0.0
+ * @see TramitacaoMovimento
+ */
 @Repository
 public interface TramitacaoMovimentoRepository extends JpaRepository<TramitacaoMovimento, Long> {
     // Exemplo utilizando @Query annotation.
