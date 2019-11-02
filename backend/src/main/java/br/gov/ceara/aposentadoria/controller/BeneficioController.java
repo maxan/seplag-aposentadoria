@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.gov.ceara.aposentadoria.dominio.dto.MensagemRetornoServicoDto;
 import br.gov.ceara.aposentadoria.enumerador.TipoBeneficio;
+import br.gov.ceara.aposentadoria.enumerador.TipoDocumentoBeneficio;
 import br.gov.ceara.aposentadoria.service.BeneficioService;
 import br.gov.ceara.aposentadoria.service.DocumentoBeneficioService;
 import br.gov.ceara.aposentadoria.service.TramitacaoMovimentoService;
@@ -78,10 +79,11 @@ public class BeneficioController {
                         HttpStatus.BAD_REQUEST)));
     }
 
-    @PostMapping(path = "/{beneficioId}/documento")
+    @PostMapping(path = "/{beneficioId}/documentos/{tipoDocumento}")
     public Mono<ResponseEntity> salvarDocumentoBeneficio(@PathVariable("beneficioId") Long beneficioId,
+            @PathVariable("tipoDocumento") TipoDocumentoBeneficio tipoDocumento,
             @RequestParam("file") MultipartFile arquivo) {
-        return this.documentoBeneficioService.salvarDocumentoBeneficio(arquivo, beneficioId)
+        return this.documentoBeneficioService.salvarDocumentoBeneficio(arquivo, beneficioId, tipoDocumento)
                 .subscribeOn(Schedulers.elastic())
                 .map(documentoSalvo -> new ResponseEntity(
                         new MensagemRetornoServicoDto.Builder(true, "Novo arquivo criado com sucesso.")

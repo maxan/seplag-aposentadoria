@@ -4,6 +4,8 @@ import java.time.ZonedDateTime;
 
 import javax.persistence.*;
 
+import br.gov.ceara.aposentadoria.enumerador.TipoDocumentoBeneficio;
+
 @Entity
 public class DocumentoBeneficio {
     @Id
@@ -15,6 +17,9 @@ public class DocumentoBeneficio {
     @Lob
     @Column(length = 900000)
     private byte[] conteudo;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50)
+    private TipoDocumentoBeneficio tipoDocumentoBeneficio;
     private ZonedDateTime dataCadastro;
     private String tipoConteudo;
     private String nomeOriginalArquivo;
@@ -23,13 +28,14 @@ public class DocumentoBeneficio {
 
     }
 
-    public DocumentoBeneficio(Long beneficioId, byte[] conteudo, ZonedDateTime dataCadastro, String tipoConteudo,
-            String nomeOriginalArquivo) {
+    public DocumentoBeneficio(Long beneficioId, byte[] conteudo, TipoDocumentoBeneficio tipoDocumentoBeneficio,
+            String tipoConteudo, String nomeOriginalArquivo, ZonedDateTime dataCadastro) {
         this.beneficio = new Beneficio(beneficioId);
         this.conteudo = conteudo;
         this.dataCadastro = dataCadastro;
         this.tipoConteudo = tipoConteudo;
         this.nomeOriginalArquivo = nomeOriginalArquivo;
+        this.tipoDocumentoBeneficio = tipoDocumentoBeneficio;
     }
 
     public Long getId() {
@@ -54,6 +60,14 @@ public class DocumentoBeneficio {
 
     public void setConteudo(byte[] conteudo) {
         this.conteudo = conteudo;
+    }
+
+    public TipoDocumentoBeneficio getTipoDocumentoBeneficio() {
+        return this.tipoDocumentoBeneficio;
+    }
+
+    public void setTipoDocumentoBeneficio(TipoDocumentoBeneficio tipoDocumentoBeneficio) {
+        this.tipoDocumentoBeneficio = tipoDocumentoBeneficio;
     }
 
     public ZonedDateTime getDataCadastro() {

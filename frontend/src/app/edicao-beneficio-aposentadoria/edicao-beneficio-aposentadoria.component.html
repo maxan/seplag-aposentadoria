@@ -155,7 +155,30 @@
         </button>
     </div>
     <div class="modal-body">
+        <p *ngIf="mensagemAlertaJanelaEnvioArquivo">
+            <ngb-alert
+                [type]="mensagemAlertaJanelaEnvioArquivo.tipo"
+                (close)="apagarMensagemAlertaJanelaEnvioArquivo()"
+            >
+                {{ mensagemAlertaJanelaEnvioArquivo.mensagem }}
+            </ngb-alert>
+        </p>
         <form>
+            <div class="form-group">
+                <label for="seletorTipoDocumento">Tipo do Documento</label>
+                <div class="input-group">
+                    <select
+                        class="form-control"
+                        id="seletorTipoDocumento"
+                        [(ngModel)]="tipoDocumentoSelecionado"
+                        [ngModelOptions]="{ standalone: true }"
+                    >
+                        <option *ngFor="let item of tiposDocumento" [ngValue]="item">
+                            {{ item.descricao }}
+                        </option>
+                    </select>
+                </div>
+            </div>
             <div class="form-group">
                 <label for="seletorArquivo">Arquivo</label>
                 <div class="input-group">

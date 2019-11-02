@@ -9,9 +9,12 @@ import { Beneficio } from '../shared/objects/beneficio';
 import { TramitacaoMovimento } from '../shared/objects/tramitacao-movimento';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IRespostaPadrao } from '../shared/objects/resposta-padrao';
-import { FileUploader } from 'ng2-file-upload';
+import { FileUploader, FileLikeObject } from 'ng2-file-upload';
 import { environment } from 'src/environments/environment';
 import { MensagemAlertaPagina } from '../shared/objects/mensagem-alerta-pagina';
+import { ItemSeletor } from '../shared/objects/item-seletor';
+import { TipoDocumentoBeneficio } from '../shared/objects/tipo-documento-beneficio';
+import * as _ from 'lodash';
 
 const TREE_DATA: TreeItem[] = [
     {
@@ -60,6 +63,25 @@ const TREE_DATA: TreeItem[] = [
     }
 ];
 
+const TIPO_DOCUMENTO: ItemSeletor[] = [
+    {
+        id: TipoDocumentoBeneficio.IDENTIFICACAO,
+        descricao: 'Identificação'
+    },
+    {
+        id: TipoDocumentoBeneficio.VIDA_FUNCIONAL,
+        descricao: 'Vida Funcional'
+    },
+    {
+        id: TipoDocumentoBeneficio.CONTAGEM_TEMPO,
+        descricao: 'Contagem de Tempo'
+    },
+    {
+        id: TipoDocumentoBeneficio.REMUNERACAO_PROVENTOS,
+        descricao: 'Remuneração/Proventos'
+    }
+];
+
 @Component({
     selector: 'app-edicao-beneficio-aposentadoria',
     templateUrl: './edicao-beneficio-aposentadoria.component.html',
@@ -68,9 +90,12 @@ const TREE_DATA: TreeItem[] = [
 export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
     beneficio: Beneficio;
     tramitesMovimentos: TramitacaoMovimento[];
+    tiposDocumento: ItemSeletor[];
+    tipoDocumentoSelecionado: ItemSeletor;
     treeControl = new NestedTreeControl<TreeItem>(node => node.children);
     dataSource = new MatTreeNestedDataSource<TreeItem>();
     mensagemAlertaPagina: MensagemAlertaPagina;
+    mensagemAlertaJanelaEnvioArquivo: MensagemAlertaPagina;
     uploader: FileUploader;
 
     constructor(
@@ -80,6 +105,7 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
         private modalService: NgbModal
     ) {
         this.dataSource.data = TREE_DATA;
+        this.tiposDocumento = TIPO_DOCUMENTO;
     }
 
     ngOnInit() {
@@ -97,7 +123,7 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
                             .obterTramitacoesPorBeneficio(beneficioEncontrado.id)
                             .pipe(
                                 map(respostaTramites => {
-                                    if (respostaTramites.sucesso) {
+                                    if (respostaTramites && respostaTramites.sucesso) {
                                         return [
                                             beneficioEncontrado,
                                             respostaTramites.retorno as TramitacaoMovimento[]
@@ -119,10 +145,37 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
                 this.beneficio = value[0];
                 this.tramitesMovimentos = value[1];
                 this.uploader = new FileUploader({
-                    url: `${environment.webApiHost}/v1/beneficios/${this.beneficio.id}/documento`
+                    allowedMimeType: ['application/pdf', 'application/wps-office.pdf'],
+                    maxFileSize: 10485760
                 });
                 this.uploader.onAfterAddingFile = file => {
                     file.withCredentials = false;
+                    this.apagarMensagemAlertaJanelaEnvioArquivo();
+                };
+                this.uploader.onWhenAddingFileFailed = (
+                    item: FileLikeObject,
+                    filter: any,
+                    options: any
+                ) => {
+                    switch (filter.name) {
+                        case 'fileSize':
+                            this.mensagemAlertaJanelaEnvioArquivo = {
+                                tipo: 'warning',
+                                mensagem: `O arquivo "${item.name}" é muito grande. O tamanho máximo é de 10MB.`
+                            } as MensagemAlertaPagina;
+                            break;
+                        case 'mimeType':
+                            this.mensagemAlertaJanelaEnvioArquivo = {
+                                tipo: 'warning',
+                                mensagem: `O arquivo "${item.name}" não é suportado. Apenas arquivos PDF.`
+                            } as MensagemAlertaPagina;
+                            break;
+                        default:
+                            this.mensagemAlertaJanelaEnvioArquivo = {
+                                tipo: 'warning',
+                                mensagem: `Um erro inesperado aconteceu: "${filter.name}".`
+                            } as MensagemAlertaPagina;
+                    }
                 };
                 this.uploader.response.subscribe(respostaEnvio => {
                     const resposta = JSON.parse(respostaEnvio) as IRespostaPadrao;
@@ -133,7 +186,7 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
                         } as MensagemAlertaPagina;
                     } else {
                         this.mensagemAlertaPagina = {
-                            tipo: 'success',
+                            tipo: 'warning',
                             mensagem: 'Nenhum arquivo enviado.'
                         } as MensagemAlertaPagina;
                     }
@@ -153,7 +206,13 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
         this.mensagemAlertaPagina = null;
     }
 
+    apagarMensagemAlertaJanelaEnvioArquivo() {
+        this.mensagemAlertaJanelaEnvioArquivo = null;
+    }
+
     abrirJanelaEnvioArquivo(content) {
+        this.tipoDocumentoSelecionado = this.tiposDocumento[0];
+        this.apagarMensagemAlertaJanelaEnvioArquivo();
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
             result => {
                 // TODO: Implementar tratamento para encerramento de modal.
@@ -165,6 +224,17 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
     }
 
     enviarArquivoSelecionado(modal) {
+        if (!this.tipoDocumentoSelecionado) {
+            this.mensagemAlertaJanelaEnvioArquivo = {
+                tipo: 'warning',
+                mensagem: 'É necessário selecionar o tipo do documento.'
+            } as MensagemAlertaPagina;
+
+            return;
+        }
+        let novaConfiguracao = _.clone(this.uploader.options);
+        novaConfiguracao.url = `${environment.webApiHost}/v1/beneficios/${this.beneficio.id}/documentos/${this.tipoDocumentoSelecionado.id}`;
+        this.uploader.setOptions(novaConfiguracao);
         this.uploader.uploadAll();
         modal.close(true);
     }
