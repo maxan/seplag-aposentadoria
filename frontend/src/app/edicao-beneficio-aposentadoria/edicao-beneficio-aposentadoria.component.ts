@@ -5,7 +5,7 @@ import { zip } from 'rxjs';
 import { BeneficioService } from '../shared/services/beneficio.service';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
-import { TreeItem } from '../shared/objects/tree-item';
+import { ItemTreeDocumentoBeneficio } from '../shared/objects/item-tree-documento-beneficio';
 import { Beneficio } from '../shared/objects/beneficio';
 import { TramitacaoMovimento } from '../shared/objects/tramitacao-movimento';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -19,50 +19,22 @@ import * as _ from 'lodash';
 import { DocumentoBeneficioService } from '../shared/services/documento-beneficio.service';
 import { DocumentoBeneficio } from '../shared/objects/documento-beneficio';
 
-const TREE_DATA: TreeItem[] = [
+const TREE_DATA_DOCUMENTOS: ItemTreeDocumentoBeneficio[] = [
     {
-        name: 'Identificação',
-        children: [
-            { id: 101, name: 'Doc 235' },
-            { id: 102, name: 'Doc 5356' },
-            { id: 103, name: 'Doc 236643' }
-        ]
+        key: 'IDENTIFICACAO',
+        name: 'Identificação'
     },
     {
-        name: 'Vida Funcional',
-        children: [
-            { id: 1011, name: 'Doc 1394' },
-            {
-                id: 1221,
-                name: 'Doc 9387439'
-            }
-        ]
+        key: 'VIDA_FUNCIONAL',
+        name: 'Vida Funcional'
     },
     {
-        name: 'Contagem de Tempo',
-        children: [
-            {
-                id: 7921,
-                name: 'Doc 439587'
-            },
-            {
-                id: 92921,
-                name: 'Doc 9485736'
-            }
-        ]
+        key: 'CONTAGEM_TEMPO',
+        name: 'Contagem de Tempo'
     },
     {
-        name: 'Remuneração/Proventos',
-        children: [
-            {
-                id: 7921,
-                name: 'Doc 439587'
-            },
-            {
-                id: 92921,
-                name: 'Doc 9485736'
-            }
-        ]
+        key: 'REMUNERACAO_PROVENTOS',
+        name: 'Remuneração/Proventos'
     }
 ];
 
@@ -95,8 +67,8 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
     tramitesMovimentos: TramitacaoMovimento[];
     tiposDocumento: ItemSeletor[];
     tipoDocumentoSelecionado: ItemSeletor;
-    treeControl = new NestedTreeControl<TreeItem>(node => node.children);
-    dataSource = new MatTreeNestedDataSource<TreeItem>();
+    treeControl = new NestedTreeControl<ItemTreeDocumentoBeneficio>(node => node.children);
+    dataSource = new MatTreeNestedDataSource<ItemTreeDocumentoBeneficio>();
     mensagemAlertaPagina: MensagemAlertaPagina;
     mensagemAlertaJanelaEnvioArquivo: MensagemAlertaPagina;
     uploader: FileUploader;
@@ -108,7 +80,7 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
         private documentoBeneficioService: DocumentoBeneficioService,
         private modalService: NgbModal
     ) {
-        this.dataSource.data = TREE_DATA;
+        this.dataSource.data = TREE_DATA_DOCUMENTOS;
         this.tiposDocumento = TIPO_DOCUMENTO;
     }
 
@@ -156,6 +128,17 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
             .subscribe(value => {
                 this.beneficio = value[0];
                 this.tramitesMovimentos = value[1];
+                if (value[2]) {
+                    const mapaValores = _.groupBy(value[2], 'tipoDocumentoBeneficio');
+                    _.each(this.dataSource.data, item => {
+                        item.children = _.map(mapaValores[item.key], child => {
+                            return {
+                                ...child,
+                                name: child.nomeOriginalArquivo
+                            } as ItemTreeDocumentoBeneficio;
+                        });
+                    });
+                }
                 this.uploader = new FileUploader({
                     allowedMimeType: ['application/pdf', 'application/wps-office.pdf'],
                     maxFileSize: 10485760
@@ -206,7 +189,8 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
             });
     }
 
-    hasChild = (_: number, node: TreeItem) => !!node.children && node.children.length > 0;
+    hasChild = (_: number, node: ItemTreeDocumentoBeneficio) =>
+        !!node.children && node.children.length > 0;
 
     carregarDocumento(node) {
         // TODO: Implementar visualização do arquivo após ser selecionado.
