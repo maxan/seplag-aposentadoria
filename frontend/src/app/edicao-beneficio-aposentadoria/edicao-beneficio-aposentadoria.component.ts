@@ -129,15 +129,7 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
                 this.beneficio = value[0];
                 this.tramitesMovimentos = value[1];
                 if (value[2]) {
-                    const mapaValores = _.groupBy(value[2], 'tipoDocumentoBeneficio');
-                    _.each(this.dataSource.data, item => {
-                        item.children = _.map(mapaValores[item.key], child => {
-                            return {
-                                ...child,
-                                name: child.nomeOriginalArquivo
-                            } as ItemTreeDocumentoBeneficio;
-                        });
-                    });
+                    this.construirArvoreDocumentos(value[2]);
                 }
                 this.uploader = new FileUploader({
                     allowedMimeType: ['application/pdf', 'application/wps-office.pdf'],
@@ -179,6 +171,7 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
                             tipo: 'success',
                             mensagem: 'Arquivo enviado com sucesso.'
                         } as MensagemAlertaPagina;
+                        this.atualizarListaDocumentos();
                     } else {
                         this.mensagemAlertaPagina = {
                             tipo: 'warning',
@@ -196,6 +189,31 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
         // TODO: Implementar visualização do arquivo após ser selecionado.
         console.log('SELECIONOU DOCUMENTO');
         console.log(node);
+    }
+
+    private construirArvoreDocumentos(listaDocumento) {
+        const mapaValores = _.groupBy(listaDocumento, 'tipoDocumentoBeneficio');
+        const novaArvoreDocumentos = _.clone(this.dataSource.data);
+        _.each(novaArvoreDocumentos, item => {
+            item.children = _.map(mapaValores[item.key], child => {
+                return {
+                    ...child,
+                    name: `[${child.id}] ${child.nomeOriginalArquivo}`
+                } as ItemTreeDocumentoBeneficio;
+            });
+        });
+        this.dataSource.data = null;
+        this.dataSource.data = novaArvoreDocumentos;
+    }
+
+    private atualizarListaDocumentos() {
+        this.documentoBeneficioService
+            .obterDocumentosPorBeneficio(this.beneficio.id)
+            .subscribe(resposta => {
+                if (resposta && resposta.sucesso) {
+                    this.construirArvoreDocumentos(resposta.retorno);
+                }
+            });
     }
 
     apagarMensagemAlertaPagina() {
