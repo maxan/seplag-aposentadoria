@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { map, switchMap } from 'rxjs/operators';
+import { zip } from 'rxjs';
 import { BeneficioService } from '../shared/services/beneficio.service';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
@@ -15,6 +16,8 @@ import { MensagemAlertaPagina } from '../shared/objects/mensagem-alerta-pagina';
 import { ItemSeletor } from '../shared/objects/item-seletor';
 import { TipoDocumentoBeneficio } from '../shared/objects/tipo-documento-beneficio';
 import * as _ from 'lodash';
+import { DocumentoBeneficioService } from '../shared/services/documento-beneficio.service';
+import { DocumentoBeneficio } from '../shared/objects/documento-beneficio';
 
 const TREE_DATA: TreeItem[] = [
     {
@@ -102,6 +105,7 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private beneficioService: BeneficioService,
+        private documentoBeneficioService: DocumentoBeneficioService,
         private modalService: NgbModal
     ) {
         this.dataSource.data = TREE_DATA;
@@ -119,22 +123,30 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
                 switchMap(resposta => {
                     if (resposta.sucesso) {
                         const beneficioEncontrado: Beneficio = resposta.retorno as Beneficio;
-                        return this.beneficioService
-                            .obterTramitacoesPorBeneficio(beneficioEncontrado.id)
-                            .pipe(
-                                map(respostaTramites => {
-                                    if (respostaTramites && respostaTramites.sucesso) {
-                                        return [
-                                            beneficioEncontrado,
-                                            respostaTramites.retorno as TramitacaoMovimento[]
-                                        ] as [Beneficio, TramitacaoMovimento[]];
-                                    }
-                                    return ([beneficioEncontrado, [] as TramitacaoMovimento[]] as [
-                                        Beneficio,
-                                        TramitacaoMovimento
-                                    ]) as [Beneficio, TramitacaoMovimento[]];
-                                })
-                            );
+                        return zip(
+                            this.beneficioService.obterTramitacoesPorBeneficio(
+                                beneficioEncontrado.id
+                            ),
+                            this.documentoBeneficioService.obterDocumentosPorBeneficio(
+                                beneficioEncontrado.id
+                            )
+                        ).pipe(
+                            map(([respostaTramites, respostaDocumentos]) => {
+                                let tramites: TramitacaoMovimento[] = [];
+                                let documentos: DocumentoBeneficio[] = [];
+                                if (respostaTramites && respostaTramites.sucesso) {
+                                    tramites = respostaTramites.retorno as TramitacaoMovimento[];
+                                }
+                                if (respostaDocumentos && respostaDocumentos.sucesso) {
+                                    documentos = respostaDocumentos.retorno as DocumentoBeneficio[];
+                                }
+                                return [beneficioEncontrado, tramites, documentos] as [
+                                    Beneficio,
+                                    TramitacaoMovimento[],
+                                    DocumentoBeneficio[]
+                                ];
+                            })
+                        );
                     }
                     throw new Error(
                         'Ocorreu algum problema no carregamento das informações do benefício.'

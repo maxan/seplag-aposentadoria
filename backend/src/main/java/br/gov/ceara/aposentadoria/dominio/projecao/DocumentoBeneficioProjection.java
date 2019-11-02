@@ -17,6 +17,8 @@ public interface DocumentoBeneficioProjection {
 
     String getNomeOriginalArquivo();
 
+    Beneficio getBeneficio();
+
     interface Beneficio {
         Long getId();
 

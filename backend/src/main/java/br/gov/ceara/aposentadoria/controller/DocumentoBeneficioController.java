@@ -49,7 +49,7 @@ public class DocumentoBeneficioController {
     }
 
     @GetMapping(path = "/{beneficioId}/beneficio")
-    public Mono<ResponseEntity> obterTramitacoesPorBeneficio(@PathVariable("beneficioId") Long beneficioId) {
+    public Mono<ResponseEntity> obterDocumentosPorBeneficio(@PathVariable("beneficioId") Long beneficioId) {
         return this.documentoBeneficioService.listarDocumentosPorBeneficio(beneficioId)
                 .subscribeOn(Schedulers.elastic()).collectList()
                 .map(documentos -> new ResponseEntity(

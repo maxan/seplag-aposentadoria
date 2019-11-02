@@ -17,6 +17,7 @@ import { MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FileUploadModule } from 'ng2-file-upload';
+import { DocumentoBeneficioService } from './shared/services/documento-beneficio.service';
 
 @NgModule({
     declarations: [
@@ -47,7 +48,7 @@ import { FileUploadModule } from 'ng2-file-upload';
         MatTreeModule,
         FileUploadModule
     ],
-    providers: [ServidorService, BeneficioService],
+    providers: [ServidorService, BeneficioService, DocumentoBeneficioService],
     bootstrap: [AppComponent]
 })
 export class AppModule {}
