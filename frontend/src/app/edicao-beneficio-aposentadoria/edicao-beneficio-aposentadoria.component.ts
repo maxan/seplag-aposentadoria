@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { map, switchMap } from 'rxjs/operators';
 import { zip } from 'rxjs';
@@ -63,6 +63,8 @@ const TIPO_DOCUMENTO: ItemSeletor[] = [
     styleUrls: ['./edicao-beneficio-aposentadoria.component.scss']
 })
 export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
+    @ViewChild('pdfViewer', { static: false }) pdfViewer;
+
     beneficio: Beneficio;
     tramitesMovimentos: TramitacaoMovimento[];
     tiposDocumento: ItemSeletor[];
@@ -185,10 +187,13 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
     hasChild = (_: number, node: ItemTreeDocumentoBeneficio) =>
         !!node.children && node.children.length > 0;
 
-    carregarDocumento(node) {
-        // TODO: Implementar visualização do arquivo após ser selecionado.
-        console.log('SELECIONOU DOCUMENTO');
-        console.log(node);
+    carregarDocumento(node: ItemTreeDocumentoBeneficio) {
+        if (node && node.id) {
+            this.documentoBeneficioService.obterDocumento(node.id).subscribe(response => {
+                this.pdfViewer.pdfSrc = response;
+                this.pdfViewer.refresh();
+            });
+        }
     }
 
     private construirArvoreDocumentos(listaDocumento) {

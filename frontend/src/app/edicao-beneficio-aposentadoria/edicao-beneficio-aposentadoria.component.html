@@ -44,8 +44,20 @@
         <ng-template ngbTabContent>
             <div class="container">
                 <br />
-                <div class="row">
-                    <div class="col-md-4">
+                <div class="row container-documentos">
+                    <div class="col-md-3">
+                        <div class="acoes-documentos">
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                (click)="abrirJanelaEnvioArquivo(content)"
+                            >
+                                Adicionar documento
+                            </button>
+                        </div>
+                        <br />
+                        <h5>Documentos</h5>
+                        <hr />
                         <mat-tree
                             [dataSource]="dataSource"
                             [treeControl]="treeControl"
@@ -88,20 +100,15 @@
                                 </li>
                             </mat-nested-tree-node>
                         </mat-tree>
-                        <div class="acoes-documentos">
-                            <button
-                                type="button"
-                                class="btn btn-primary"
-                                (click)="abrirJanelaEnvioArquivo(content)"
-                            >
-                                Adicionar documento
-                            </button>
-                        </div>
                     </div>
-                    <div class="col-md-8">
-                        <p>
-                            Implementar aqui visualização do arquivo.
-                        </p>
+                    <div class="col-md-9">
+                        <ng2-pdfjs-viewer
+                            #pdfViewer
+                            [externalWindow]="false"
+                            [openFile]="false"
+                            [viewBookmark]="false"
+                            [download]="true"
+                        ></ng2-pdfjs-viewer>
                     </div>
                 </div>
             </div>

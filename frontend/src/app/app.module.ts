@@ -18,6 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FileUploadModule } from 'ng2-file-upload';
 import { DocumentoBeneficioService } from './shared/services/documento-beneficio.service';
+import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
 
 @NgModule({
     declarations: [
@@ -46,7 +47,8 @@ import { DocumentoBeneficioService } from './shared/services/documento-beneficio
         MatIconModule,
         MatButtonModule,
         MatTreeModule,
-        FileUploadModule
+        FileUploadModule,
+        PdfJsViewerModule
     ],
     providers: [ServidorService, BeneficioService, DocumentoBeneficioService],
     bootstrap: [AppComponent]

@@ -15,4 +15,10 @@ export class DocumentoBeneficioService {
             `${environment.webApiHost}${this.resourcePath}/${beneficioId}/beneficio`
         );
     }
+
+    public obterDocumento(documentoId: number): Observable<any> {
+        return this.client.get(`${environment.webApiHost}${this.resourcePath}/${documentoId}`, {
+            responseType: 'blob'
+        });
+    }
 }
