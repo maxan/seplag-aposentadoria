@@ -1,5 +1,7 @@
 package br.gov.ceara.aposentadoria.controller;
 
+import java.util.Collections;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.gov.ceara.aposentadoria.dominio.dto.MensagemRetornoServicoDto;
+import br.gov.ceara.aposentadoria.enumerador.SetorTramitacao;
 import br.gov.ceara.aposentadoria.enumerador.TipoBeneficio;
 import br.gov.ceara.aposentadoria.enumerador.TipoDocumentoBeneficio;
 import br.gov.ceara.aposentadoria.service.BeneficioService;
@@ -69,7 +72,7 @@ public class BeneficioController {
     @GetMapping(path = "/{beneficioId}/tramitacoes")
     public Mono<ResponseEntity> obterTramitacoesPorBeneficio(@PathVariable("beneficioId") Long beneficioId) {
         return this.tramitacaoMovimentoService.obterTramitacoesPorBeneficio(beneficioId)
-                .subscribeOn(Schedulers.elastic()).collectList()
+                .subscribeOn(Schedulers.elastic()).collectList().defaultIfEmpty(Collections.emptyList())
                 .map(tramitacoes -> new ResponseEntity(
                         new MensagemRetornoServicoDto.Builder(true, "Tramitações para benefício listadas com sucesso.")
                                 .retorno(tramitacoes).build(),
@@ -88,6 +91,19 @@ public class BeneficioController {
                 .map(documentoSalvo -> new ResponseEntity(
                         new MensagemRetornoServicoDto.Builder(true, "Novo arquivo criado com sucesso.")
                                 .retorno(documentoSalvo).build(),
+                        HttpStatus.CREATED))
+                .onErrorResume(throwable -> Mono.just(new ResponseEntity(
+                        new MensagemRetornoServicoDto.Builder(false, throwable.getLocalizedMessage()).build(),
+                        HttpStatus.BAD_REQUEST)));
+    }
+
+    @PutMapping(path = "/{beneficioId}/tramitacao/{setorDestino}")
+    public Mono<ResponseEntity> tramitarProcessoBeneficio(@PathVariable("beneficioId") Long beneficioId,
+            @PathVariable("setorDestino") SetorTramitacao setorDestino) {
+        return this.tramitacaoMovimentoService.tramitarProcessoBeneficio(beneficioId, setorDestino)
+                .subscribeOn(Schedulers.elastic())
+                .map(tramitacoes -> new ResponseEntity(new MensagemRetornoServicoDto.Builder(true,
+                        String.format("Processo movido para setor '%s'.", setorDestino)).retorno(tramitacoes).build(),
                         HttpStatus.CREATED))
                 .onErrorResume(throwable -> Mono.just(new ResponseEntity(
                         new MensagemRetornoServicoDto.Builder(false, throwable.getLocalizedMessage()).build(),

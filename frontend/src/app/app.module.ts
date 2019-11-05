@@ -19,6 +19,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { FileUploadModule } from 'ng2-file-upload';
 import { DocumentoBeneficioService } from './shared/services/documento-beneficio.service';
 import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
+import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import {
+    faSquare,
+    faCheckSquare,
+    faCoffee,
+    faPlusSquare,
+    faForward
+} from '@fortawesome/free-solid-svg-icons';
+import {
+    faSquare as farSquare,
+    faCheckSquare as farCheckSquare,
+    faPlusSquare as farPlusSquare
+} from '@fortawesome/free-regular-svg-icons';
 
 @NgModule({
     declarations: [
@@ -45,6 +58,7 @@ import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
         ]),
         NgbModule,
         MatIconModule,
+        FontAwesomeModule,
         MatButtonModule,
         MatTreeModule,
         FileUploadModule,
@@ -53,4 +67,17 @@ import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
     providers: [ServidorService, BeneficioService, DocumentoBeneficioService],
     bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule {
+    constructor(private library: FaIconLibrary) {
+        library.addIcons(
+            faSquare,
+            faCheckSquare,
+            farSquare,
+            farCheckSquare,
+            faCoffee,
+            faPlusSquare,
+            farPlusSquare,
+            faForward
+        );
+    }
+}

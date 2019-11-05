@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { IRespostaPadrao } from '../objects/resposta-padrao';
 import { Observable } from 'rxjs';
+import { SetorTramitacao } from '../objects/setor-tramitacao';
 
 @Injectable()
 export class BeneficioService {
@@ -27,6 +28,16 @@ export class BeneficioService {
     public obterTramitacoesPorBeneficio(beneficioId: number): Observable<IRespostaPadrao> {
         return this.client.get<IRespostaPadrao>(
             `${environment.webApiHost}${this.resourcePath}/${beneficioId}/tramitacoes`
+        );
+    }
+
+    public tramitarProcessoBeneficio(
+        beneficioId: number,
+        setorDestino: SetorTramitacao
+    ): Observable<IRespostaPadrao> {
+        return this.client.put<IRespostaPadrao>(
+            `${environment.webApiHost}${this.resourcePath}/${beneficioId}/tramitacao/${setorDestino}`,
+            {}
         );
     }
 }

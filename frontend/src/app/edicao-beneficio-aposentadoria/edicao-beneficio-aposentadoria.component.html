@@ -46,17 +46,17 @@
                 <br />
                 <div class="row container-documentos">
                     <div class="col-md-3">
-                        <div class="acoes-documentos">
+                        <hr />
+                        <div class="titulo-documentos">
                             <button
                                 type="button"
-                                class="btn btn-primary"
+                                class="btn"
                                 (click)="abrirJanelaEnvioArquivo(content)"
                             >
-                                Adicionar documento
+                                <fa-icon [icon]="['far', 'plus-square']" size="lg"></fa-icon>
+                                Adicionar
                             </button>
                         </div>
-                        <br />
-                        <h5>Documentos</h5>
                         <hr />
                         <mat-tree
                             [dataSource]="dataSource"
@@ -123,6 +123,18 @@
                     <em>{{ beneficio.servidor.nome }}</em
                     >.
                 </p>
+                <hr />
+                <div class="titulo-documentos">
+                    <button
+                        type="button"
+                        class="btn"
+                        (click)="abrirJanelaTramitacaoProcesso(contentTramitacao)"
+                    >
+                        <fa-icon [icon]="['fas', 'forward']" size="lg"></fa-icon>
+                        Tramitar processo
+                    </button>
+                </div>
+                <hr />
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -208,6 +220,47 @@
             [disabled]="!uploader.getNotUploadedItems().length"
         >
             Enviar arquivo agora
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #contentTramitacao let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Tramitar processo</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss(false)">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p *ngIf="mensagemAlertaJanelaTramitacao">
+            <ngb-alert
+                [type]="mensagemAlertaJanelaTramitacao.tipo"
+                (close)="apagarMensagemAlertaJanelaTramitacao()"
+            >
+                {{ mensagemAlertaJanelaTramitacao.mensagem }}
+            </ngb-alert>
+        </p>
+        <form>
+            <div class="form-group">
+                <label for="seletorProximoSetor">Mover para setor</label>
+                <div class="input-group">
+                    <select
+                        class="form-control"
+                        id="seletorProximoSetor"
+                        [(ngModel)]="setorDestinoSelecionado"
+                        [ngModelOptions]="{ standalone: true }"
+                    >
+                        <option *ngFor="let item of setoresTramitacao" [ngValue]="item">
+                            {{ item.descricao }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="tramitarProcesso(modal)">
+            Atualizar
         </button>
     </div>
 </ng-template>

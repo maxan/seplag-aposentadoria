@@ -18,6 +18,7 @@ import { TipoDocumentoBeneficio } from '../shared/objects/tipo-documento-benefic
 import * as _ from 'lodash';
 import { DocumentoBeneficioService } from '../shared/services/documento-beneficio.service';
 import { DocumentoBeneficio } from '../shared/objects/documento-beneficio';
+import { SetorTramitacao } from '../shared/objects/setor-tramitacao';
 
 const TREE_DATA_DOCUMENTOS: ItemTreeDocumentoBeneficio[] = [
     {
@@ -57,6 +58,12 @@ const TIPO_DOCUMENTO: ItemSeletor[] = [
     }
 ];
 
+const SETOR_TRAMITACAO: ItemSeletor[] = [
+    { id: SetorTramitacao.COMITE_GESTOR, descricao: 'Comitê Destor' },
+    { id: SetorTramitacao.SECRETARIA, descricao: 'Secretaria' },
+    { id: SetorTramitacao.ANALISE, descricao: 'Análise' }
+];
+
 @Component({
     selector: 'app-edicao-beneficio-aposentadoria',
     templateUrl: './edicao-beneficio-aposentadoria.component.html',
@@ -68,11 +75,14 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
     beneficio: Beneficio;
     tramitesMovimentos: TramitacaoMovimento[];
     tiposDocumento: ItemSeletor[];
+    setoresTramitacao: ItemSeletor[];
     tipoDocumentoSelecionado: ItemSeletor;
+    setorDestinoSelecionado: ItemSeletor;
     treeControl = new NestedTreeControl<ItemTreeDocumentoBeneficio>(node => node.children);
     dataSource = new MatTreeNestedDataSource<ItemTreeDocumentoBeneficio>();
     mensagemAlertaPagina: MensagemAlertaPagina;
     mensagemAlertaJanelaEnvioArquivo: MensagemAlertaPagina;
+    mensagemAlertaJanelaTramitacao: MensagemAlertaPagina;
     uploader: FileUploader;
 
     constructor(
@@ -84,6 +94,7 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
     ) {
         this.dataSource.data = TREE_DATA_DOCUMENTOS;
         this.tiposDocumento = TIPO_DOCUMENTO;
+        this.setoresTramitacao = SETOR_TRAMITACAO;
     }
 
     ngOnInit() {
@@ -229,9 +240,26 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
         this.mensagemAlertaJanelaEnvioArquivo = null;
     }
 
+    apagarMensagemAlertaJanelaTramitacao() {
+        this.mensagemAlertaJanelaTramitacao = null;
+    }
+
     abrirJanelaEnvioArquivo(content) {
         this.tipoDocumentoSelecionado = this.tiposDocumento[0];
         this.apagarMensagemAlertaJanelaEnvioArquivo();
+        this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
+            result => {
+                // TODO: Implementar tratamento para encerramento de modal.
+            },
+            reason => {
+                // TODO: Implementar tratamento para encerramento de modal.
+            }
+        );
+    }
+
+    abrirJanelaTramitacaoProcesso(content) {
+        this.setorDestinoSelecionado = this.setoresTramitacao[0];
+        this.apagarMensagemAlertaJanelaTramitacao();
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
             result => {
                 // TODO: Implementar tratamento para encerramento de modal.
@@ -256,5 +284,42 @@ export class EdicaoBeneficioAposentadoriaComponent implements OnInit {
         this.uploader.setOptions(novaConfiguracao);
         this.uploader.uploadAll();
         modal.close(true);
+    }
+
+    tramitarProcesso(modal) {
+        if (!this.setorDestinoSelecionado) {
+            this.mensagemAlertaJanelaTramitacao = {
+                tipo: 'warning',
+                mensagem: 'É necessário selecionar o setor de destino.'
+            } as MensagemAlertaPagina;
+
+            return;
+        }
+        this.beneficioService
+            .tramitarProcessoBeneficio(this.beneficio.id, this.setorDestinoSelecionado.id)
+            .subscribe(
+                resposta => {
+                    if (resposta.sucesso) {
+                        this.mensagemAlertaPagina = {
+                            tipo: 'success',
+                            mensagem: 'Tramitação relizada com sucesso.'
+                        } as MensagemAlertaPagina;
+                        modal.close(true);
+                        this.beneficioService
+                            .obterTramitacoesPorBeneficio(this.beneficio.id)
+                            .subscribe(respostaTramitacao => {
+                                if (respostaTramitacao.sucesso) {
+                                    this.tramitesMovimentos = respostaTramitacao.retorno;
+                                }
+                            });
+                    }
+                },
+                resposta => {
+                    this.mensagemAlertaJanelaTramitacao = {
+                        tipo: 'warning',
+                        mensagem: `Um problema ocorreu ao tentar realizar a tramitação do processo. ${resposta.error.mensagem}.`
+                    } as MensagemAlertaPagina;
+                }
+            );
     }
 }

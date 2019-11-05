@@ -22,6 +22,21 @@ public class TramitacaoMovimento {
     private SetorTramitacao setorDestino;
     private ZonedDateTime dataMovimentacao;
 
+    public TramitacaoMovimento() {
+    }
+
+    public TramitacaoMovimento(Long beneficioId, SetorTramitacao setorOrigem, SetorTramitacao setorDestino,
+            ZonedDateTime dataMovimentacao) {
+        this.beneficio = new Beneficio(beneficioId);
+        this.setorOrigem = setorOrigem;
+        this.setorDestino = setorDestino;
+        this.dataMovimentacao = dataMovimentacao;
+    }
+
+    public TramitacaoMovimento(Long beneficioId, SetorTramitacao setorDestino, ZonedDateTime dataMovimentacao) {
+        this(beneficioId, null, setorDestino, dataMovimentacao);
+    }
+
     public Long getId() {
         return this.id;
     }
